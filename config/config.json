@@ -1,0 +1,9 @@
+{
+    "server_ip": "mc.gamster.org",
+    "server_port": 25565,
+    "version": "1.12.2",
+    "logFile": "logs/debug.log",
+    "consoleIsChat": true,
+    "cliPrefix": ".",
+    "enableCLICommands": true
+}
