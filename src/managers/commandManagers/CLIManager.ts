@@ -2,12 +2,14 @@ import readline from "readline/promises";
 
 import CommandList from "../../commands/cliCommands";
 import BaseCommandManager from "./BaseCommandManager";
+import BotClient from "../../BotClient";
 
 export default class CLIManager extends BaseCommandManager {
     protected cmdPrefix = this.client.config.cliPrefix;
-    private rl!: readline.Interface;
+    private rl;
 
-    public init() {
+    constructor(client: BotClient) {
+        super(client);
         this.loadCommands(CommandList);
 
         const rl = readline.createInterface({
@@ -18,6 +20,9 @@ export default class CLIManager extends BaseCommandManager {
         this.rl = rl;
         this.inputLoop();
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    public init() {}
 
     protected say(msg: string) {
         this.client.logger.info(msg);

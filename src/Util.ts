@@ -17,4 +17,24 @@ export default class Util {
 
         return [name.toLowerCase(), args];
     }
+
+    static waitForCondition(condition: () => boolean, timeoutError: any, timeout = 60000, interval = 100) {
+        return new Promise<void>((resolve, reject) => {
+            let _timeout: NodeJS.Timeout | undefined;
+            
+            if(timeout >= 0) {
+                _timeout = setTimeout(() => reject(timeoutError), timeout);
+            }
+
+            setInterval(() => {
+                if(condition()) {
+                    if(_timeout) {
+                        clearTimeout(_timeout);
+                    }
+
+                    resolve();
+                }
+            }, interval);
+        });
+    }
 }

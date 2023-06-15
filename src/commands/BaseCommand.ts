@@ -5,7 +5,7 @@ import Util from "../Util";
 
 abstract class BaseCommand implements ICommand {
     public abstract name: string;
-    public abstract wlonly: boolean;
+    public abstract handler(client: BotClient, args: string, username?: string): void;
 
     public isSubcmd!: boolean;
     public enabled = true;
@@ -39,10 +39,6 @@ abstract class BaseCommand implements ICommand {
         return this.handler(client, args, username);
     }
 
-    public handler(client: BotClient, ..._: unknown[]) {
-        this.say("test command");
-    }
-
     private getSubcmd(name: string) {
         if(this.subcmds.size < 1) {
             return;
@@ -73,4 +69,8 @@ abstract class BaseCommand implements ICommand {
 export default class extends BaseCommand {
     name = "";
     wlonly = true;
+
+    public handler(..._: unknown[]) {
+        this.say("test command");
+    }
 }

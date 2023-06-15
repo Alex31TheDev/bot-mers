@@ -1,4 +1,5 @@
 import BotClient from "../BotClient";
+import MovementManager from "./MovementManager";
 
 import CLIManager from "./commandManagers/CLIManager";
 
@@ -6,6 +7,7 @@ export default class Managers {
     private client;
 
     public CLIManager!: CLIManager;
+    public MovementManager! :MovementManager;
 
     constructor(client: BotClient) {
         this.client = client;
@@ -13,6 +15,8 @@ export default class Managers {
         if(client.config.enableCLICommands) {
             this.CLIManager = new CLIManager(client);
         }
+
+        this.MovementManager = new MovementManager(client);
     }
 
     public async init() {

@@ -83,7 +83,7 @@ export default abstract class BaseCommandManager implements IManager {
     private loadSubcommands() {
         for(const cmd of this.commands) {
             if(cmd.isSubcmd || !cmd.subcmdNames) {
-                return;
+                continue;
             }
 
             cmd.subcmdNames.forEach(n => {

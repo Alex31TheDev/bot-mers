@@ -69,6 +69,38 @@ export default class BotClient {
     }
 
     public async startBot() {
+        this.logger.info("Loading managers...");
+        this.managers = new Managers(this);
+
+        await this.connectBot();
+        await this.managers.init();
+    }
+
+    public async restartBot() {
+        this.logger.info("Restarting bot...");
+
+        if(this.connected) {
+            this.bot.quit();
+        }
+
+        await this.connectBot();
+        await this.managers.init();
+    }
+
+    private async connectBot() {
+        this.createBot();
+
+        await this.waitForSpawn();
+        this.logger.info("Sending login...");
+        this.sendLogin();
+
+        await this.waitForLogin();
+        this.logger.info("Successfully logged in.");
+
+        await this.joinSection();
+    }
+
+    private createBot() {
         this.logger.info("Creating bot...");
         this.bot = createBot({
             host: this.config.server_ip,
@@ -80,21 +112,9 @@ export default class BotClient {
 
         this.logger.info("Loading events...");
         this.loadEvents();
-
-        this.logger.info("Loading managers...");
-        this.managers = new Managers(this);
-        await this.managers.init();
-
-        this.logger.info("Bot started.");
-        await this.waitForSpawn();
-        this.logger.info("Sending login...");
-        this.sendLogin();
-
-        await this.waitForLogin();
-        this.logger.info("Successfully logged in.");
     }
 
-    public async joinSection() {
+    private async joinSection() {
         this.logger.info("Joining section...");
         this.bot.setQuickBarSlot(0);
         this.bot.activateItem();
@@ -104,51 +124,6 @@ export default class BotClient {
 
         await this.waitForSpawn();
         this.logger.info("Successfully joined section.");
-    }
-
-    public quit() {
-        this.logger.info("Disconnecting bot...");
-        this.bot.quit();
-        process.exit(0);
-    }
-    
-    private waitForSpawn() {
-        return new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(() => reject("Bot didn't spawn in time."), 60000),
-                  interval = setInterval(() => {
-                if(this.spawned) {
-                    clearTimeout(timeout);
-                    clearInterval(interval);
-
-                    this.spawned = false;
-                    resolve();
-                } else if(!this.connected) {
-                    clearTimeout(timeout);
-                    clearInterval(interval);
-
-                    reject("Bot was disconnected.");
-                }
-            }, 100);
-        });
-    }
-
-    private waitForLogin() {
-        return new Promise<void>((resolve, reject) => {
-            const timeout = setTimeout(() => reject("Bot didn't login in time."), 60000),
-                  interval = setInterval(() => {
-                if(this.loggedIn) {
-                    clearTimeout(timeout);
-                    clearInterval(interval);
-
-                    resolve();
-                } else if(!this.connected) {
-                    clearTimeout(timeout);
-                    clearInterval(interval);
-
-                    reject("Bot was disconnected.");
-                }
-            }, 100);
-        });
     }
 
     private loadEvents() {
@@ -176,7 +151,21 @@ export default class BotClient {
         this.logger.info(`Loaded ${ok + bad} events. ${ok} successful, ${bad} failed.`);
     }
 
+    private waitForLogin() {
+        return Util.waitForCondition(() => this.loggedIn, "Bot didn't login in time.");
+    }
+
+    private waitForSpawn() {
+        return Util.waitForCondition(() => this.spawned, "Bot didn't spawn in time.");
+    }
+
     private sendLogin() {
         this.bot.chat(`/login ${this.auth.password}`);
+    }
+
+    public quit() {
+        this.logger.info("Disconnecting bot...");
+        this.bot.quit();
+        process.exit(0);
     }
 }

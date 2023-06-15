@@ -3,7 +3,6 @@ import BotClient from "../BotClient";
 export default interface ICommand {
     name: string;
     isSubcmd: boolean;
-    wlonly: boolean;
     enabled: boolean;
     
     parent?: string;
