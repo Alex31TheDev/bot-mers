@@ -6,7 +6,7 @@ import IManager from "./IManager";
 
 export default class MovementManager implements IManager {
     public isFlying = false;
-    public speedFactor = 3;
+    public speedFactor = 9;
 
     public origin!: Vec3;
     public destination!: Vec3;
@@ -40,7 +40,13 @@ export default class MovementManager implements IManager {
             this.packetWrite(name, params);
         };
 
-        const sethome = setInterval(() => this.client.bot.chat("/sethome"), 30000);
+        const sethome = setInterval(() => {
+            const pos = this.client.bot.entity.position;
+
+            if(Math.abs(pos.x) > 500 && Math.abs(pos.y) > 500) {
+                this.client.bot.chat("/sethome");
+            }
+        }, 30000);
 
         await this.client.bot.lookAt(coords);
         this.destination = coords;
