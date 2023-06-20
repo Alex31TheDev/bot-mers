@@ -10,7 +10,7 @@ export default class physicsTick implements IBotEvent {
 
             if(pos.distanceTo(client.managers.MovementManager.origin) >
                client.managers.MovementManager.destination.distanceTo(client.managers.MovementManager.origin)) {
-                client.managers.MovementManager.isFlying = false;
+                client.managers.MovementManager.flyToEnd();
                 return;
             }
 

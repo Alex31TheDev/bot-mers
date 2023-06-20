@@ -8,8 +8,8 @@ export default class MovementManager implements IManager {
     public isFlying = false;
     public speedFactor = 9;
 
-    public origin!: Vec3;
-    public destination!: Vec3;
+    public origin = new Vec3(NaN, NaN, NaN);
+    public destination = new Vec3(NaN, NaN, NaN);
 
     private client;
     private packetWrite!: (name: string, params: any) => void;
@@ -57,6 +57,12 @@ export default class MovementManager implements IManager {
 
         this.client.bot._client.write = this.packetWrite;
         clearInterval(sethome);
+    }
+
+    public flyToEnd() {
+        this.isFlying = false;
+        this.origin = new Vec3(NaN, NaN, NaN);
+        this.destination = new Vec3(NaN, NaN, NaN);
     }
 
     public calculateMovement(yaw: number) {

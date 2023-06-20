@@ -5,13 +5,21 @@ import BaseCommand from "../../BaseCommand";
 
 export default class flyToStop extends BaseCommand {
     public name = "flyto";
-    public subcmdNames = ["stop", "speed"];
+    public subcmdNames = ["stop", "speed", "restore"];
 
     public handler(client: BotClient, args: string) {
         const split = args.split(" "),
-              coords = new Vec3(parseInt(split[0]), parseInt(split[2]), parseInt(split[1]));
+              x = parseInt(split[0]),
+              y = parseInt(split[1]),
+              z = parseInt(split[2]);
 
-        this.say(`Flying to: ${coords.x}, ${coords.z} at y=${coords.y}`);
+        if(isNaN(x) || isNaN(y) || isNaN(z)) {
+            this.say(`Invalid coordonates: (${split[0]}, ${split[1]}, ${split[2]})`);
+            return;
+        }
+        
+        this.say(`Flying to: ${x}, ${z} at y=${y}`);
+        const coords = new Vec3(x, y, z);
         client.managers.MovementManager.speedFlyTo(coords);
     }
 }
