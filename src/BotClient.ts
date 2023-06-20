@@ -74,17 +74,30 @@ export default class BotClient {
 
         await this.connectBot();
         await this.managers.init();
+
+        await this.runStartupCommands();
     }
 
     public async restartBot() {
         this.logger.info("Restarting bot...");
-
-        if(this.connected) {
-            this.bot.quit();
-        }
+        this.quit(false);
 
         await this.connectBot();
         await this.managers.init();
+
+        await this.runStartupCommands();
+    }
+
+    private async runStartupCommands() {
+        if(!this.config.startupCommands) {
+            return;
+        }
+
+        this.logger.info("Running startup commands...");
+
+        for(const cmd of this.config.startupCommands) {
+            await this.managers.CLIManager.executeCmd(cmd);
+        }
     }
 
     private async connectBot() {
@@ -116,6 +129,8 @@ export default class BotClient {
 
     private async joinSection() {
         this.logger.info("Joining section...");
+        this.spawned = false;
+
         this.bot.setQuickBarSlot(0);
         this.bot.activateItem();
 
@@ -155,7 +170,7 @@ export default class BotClient {
         return Util.waitForCondition(() => this.loggedIn, "Bot didn't login in time.");
     }
 
-    private waitForSpawn() {
+    private async waitForSpawn() {
         return Util.waitForCondition(() => this.spawned, "Bot didn't spawn in time.");
     }
 
@@ -163,9 +178,18 @@ export default class BotClient {
         this.bot.chat(`/login ${this.auth.password}`);
     }
 
-    public quit() {
+    public quit(stopProcess: boolean) {
         this.logger.info("Disconnecting bot...");
         this.bot.quit();
-        process.exit(0);
+
+        if(stopProcess) {
+            process.exit(0);
+        } else {
+            this.connected = false;
+            this.spawned = false;
+            this.loggedIn = false;
+
+            this.managers.MovementManager.isFlying = false;
+        }
     }
 }

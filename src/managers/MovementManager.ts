@@ -19,7 +19,6 @@ export default class MovementManager implements IManager {
     }
 
     public init() {
-        this.isFlying = false;
         this.packetWrite = this.client.bot._client.write.bind(this.client.bot._client);
     }
 

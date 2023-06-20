@@ -5,7 +5,9 @@ type Config = {
     logFile: string,
     consoleIsChat: boolean,
     cliPrefix: string,
-    enableCLICommands: boolean
+    enableCLICommands: boolean,
+    autoRestart: boolean,
+    startupCommands?: string[]
 };
 
 const configDefaults = {

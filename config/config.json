@@ -5,5 +5,10 @@
     "logFile": "logs/debug.log",
     "consoleIsChat": true,
     "cliPrefix": ".",
-    "enableCLICommands": true
+    "enableCLICommands": true,
+    "autoRestart": true,
+    "startupCommands": [
+        ".exec home",
+        ".flyto 29999990 29999990 90"
+    ]
 }

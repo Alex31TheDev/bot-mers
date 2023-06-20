@@ -6,6 +6,6 @@ export default class quit extends BaseCommand {
     public aliases = ["q"];
 
     public handler(client: BotClient) {
-        client.quit();
+        client.quit(true);
     }
 }

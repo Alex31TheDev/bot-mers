@@ -5,13 +5,13 @@ import BaseCommand from "../../BaseCommand";
 
 export default class flyToStop extends BaseCommand {
     public name = "flyto";
-    public subcmdNames = ["stop", "speed", "restore"];
+    public subcmdNames = ["stop", "speed", "restart"];
 
     public handler(client: BotClient, args: string) {
         const split = args.split(" "),
               x = parseInt(split[0]),
-              y = parseInt(split[1]),
-              z = parseInt(split[2]);
+              y = parseInt(split[2]),
+              z = parseInt(split[1]);
 
         if(isNaN(x) || isNaN(y) || isNaN(z)) {
             this.say(`Invalid coordonates: (${split[0]}, ${split[1]}, ${split[2]})`);
