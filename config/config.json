@@ -2,13 +2,11 @@
     "server_ip": "mc.gamster.org",
     "server_port": 25565,
     "version": "1.12.2",
+    "premium": true,
     "logFile": "logs/debug.log",
     "consoleIsChat": true,
     "cliPrefix": ".",
     "enableCLICommands": true,
     "autoRestart": true,
-    "startupCommands": [
-        ".exec home",
-        ".flyto 29999990 29999990 90"
-    ]
+    "startupCommands": []
 }

@@ -2,6 +2,7 @@ type Config = {
     server_ip: string,
     server_port: number,
     version: string,
+    premium: boolean,
     logFile: string,
     consoleIsChat: boolean,
     cliPrefix: string,

@@ -1,4 +1,4 @@
-import { Bot, BotEvents, createBot } from "mineflayer";
+import { Bot, BotEvents, BotOptions, createBot } from "mineflayer";
 
 import { Config, configDefaults } from "./config/Config";
 import Auth from "./config/Auth";
@@ -89,7 +89,8 @@ export default class BotClient {
     }
 
     private async runStartupCommands() {
-        if(!this.config.startupCommands) {
+        if(!this.config.startupCommands || 
+           this.config.startupCommands.length < 1) {
             return;
         }
 
@@ -102,25 +103,38 @@ export default class BotClient {
 
     private async connectBot() {
         this.createBot();
-
         await this.waitForSpawn();
-        this.logger.info("Sending login...");
-        this.sendLogin();
+        
+        if(!this.config.premium) {
+            this.logger.info("Sending login...");
+            this.sendLogin();
 
-        await this.waitForLogin();
-        this.logger.info("Successfully logged in.");
+            await this.waitForLogin();
+            this.logger.info("Successfully logged in.");
+        }
 
         await this.joinSection();
     }
 
     private createBot() {
         this.logger.info("Creating bot...");
-        this.bot = createBot({
+        const options: BotOptions = {
             host: this.config.server_ip,
             port: this.config.server_port,
-            username: this.auth.username,
-            version: this.config.version
-        });
+            version: this.config.version,
+            username: ""
+        } ;
+
+        if(this.config.premium) {
+            options.username = this.auth.email;
+            options.password = this.auth.password;
+
+            options.auth = "microsoft";
+        } else {
+            options.username = this.auth.username;
+        }
+
+        this.bot = createBot(options);
         this.connected = true;
 
         this.logger.info("Loading events...");
